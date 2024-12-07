@@ -11,6 +11,10 @@ public abstract class Scheduler {
         this.processList = processList;
     }
 
+    public List<Process> getProcessList() {
+        return processList;
+    }
+
     public abstract void startScheduling();
 
     protected void calculateWaitingTime() {

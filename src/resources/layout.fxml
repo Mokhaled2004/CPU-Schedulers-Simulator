@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="MainController">
+    <Canvas fx:id="canvas" width="800" height="400" />
+    <Label text="Average Waiting Time:" />
+    <Label fx:id="avgWaitingTimeLabel" />
+    <Label text="Average Turnaround Time:" />
+    <Label fx:id="avgTurnaroundTimeLabel" />
+</VBox>
