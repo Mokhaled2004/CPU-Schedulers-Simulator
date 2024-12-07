@@ -15,11 +15,11 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        // Step 1: Create process objects
-        Process p1 = new Process("P1", "Red", 0, 8, 0, 0);
-        Process p2 = new Process("P2", "Blue", 1, 4, 0, 0);
-        Process p3 = new Process("P3", "Green", 2, 9, 0, 0);
-        Process p4 = new Process("P4", "Yellow", 3, 5, 0, 0);
+        // Step 1: Create process objects with name, color, arrival time, burst time, waiting time, turnaround time, and priority
+        Process p1 = new Process("P1", "Red", 0, 8, 0, 0, 1); // Added priority value
+        Process p2 = new Process("P2", "Blue", 1, 4, 0, 0, 2);
+        Process p3 = new Process("P3", "Green", 2, 9, 0, 0, 3);
+        Process p4 = new Process("P4", "Yellow", 3, 5, 0, 0, 4);
 
         // Step 2: Add processes to the list
         List<Process> processList = new ArrayList<>();
@@ -42,7 +42,7 @@ public class Main extends Application {
         addLabels(vbox, scheduler);
 
         // Step 6: Set up Canvas to visualize CPU scheduling graph
-        Canvas canvas = createCanvas();
+        Canvas canvas = createCanvas(scheduler);
 
         // Add Canvas and labels to VBox
         vbox.getChildren().add(canvas);
@@ -68,22 +68,39 @@ public class Main extends Application {
         }
     }
 
-    private Canvas createCanvas() {
+    private Canvas createCanvas(SJFNonPreemptiveScheduler scheduler) {
         // Create Canvas for the scheduling graph
-        Canvas canvas = new Canvas(800, 200);
+        Canvas canvas = new Canvas(800, 400);
         GraphicsContext gc = canvas.getGraphicsContext2D();
 
         // Define burst times and process names
-        String[] processes = {"P1", "P2", "P3", "P4"};
-        int[] burstTimes = {8, 4, 9, 5};
-        Color[] colors = {Color.RED, Color.BLUE, Color.GREEN, Color.YELLOW};
+        List<Process> processes = scheduler.getProcessList();  // Get the process list from the scheduler
+        int startX = 50; // Starting X position
 
         // Draw the process scheduling graph (based on burst times)
-        int startX = 50;
-        for (int i = 0; i < processes.length; i++) {
-            gc.setFill(colors[i]);
-            gc.fillRect(startX, 100, burstTimes[i] * 50, 30);  // Bar width based on burst time
-            startX += burstTimes[i] * 50;
+        for (Process process : processes) {
+            Color processColor;
+            switch (process.getColor()) {
+                case "Red":
+                    processColor = Color.RED;
+                    break;
+                case "Blue":
+                    processColor = Color.BLUE;
+                    break;
+                case "Green":
+                    processColor = Color.GREEN;
+                    break;
+                case "Yellow":
+                    processColor = Color.YELLOW;
+                    break;
+                default:
+                    processColor = Color.GRAY;
+            }
+
+            // Draw the process on the canvas (based on burst time)
+            gc.setFill(processColor);
+            gc.fillRect(startX, 100, process.getBurstTime() * 50, 30);  // Bar width based on burst time
+            startX += process.getBurstTime() * 50; // Update the starting X position for the next process
         }
 
         return canvas;

@@ -24,14 +24,15 @@ public class PriorityScheduler extends Scheduler {
     }
 
     private void sortProcessesByPriority() {
-        processList.sort((p1, p2) -> Integer.compare(p1.getPriorityNumber(), p2.getPriorityNumber()));
+        // Sort the processes based on their priority in ascending order
+        processList.sort((p1, p2) -> Integer.compare(p1.getPriority(), p2.getPriority()));
     }
 
     private void executeProcess(Process process) {
         saveState();
-        
-        System.out.println("Executing Process: " + process.getProcessName() + " with Priority: " + process.getPriorityNumber());
 
+        // Print out the execution of the process
+        System.out.println("Executing Process: " + process.getProcessName() + " with Priority: " + process.getPriority());
 
         restoreState();
     }
@@ -86,9 +87,9 @@ public class PriorityScheduler extends Scheduler {
 
     @Override
     public void displayExecutionOrder() {
-        System.out.println("Execution Order (Non-Preemptive Priority): ");
+        System.out.println("Execution Order (Priority Scheduling): ");
         for (Process process : processList) {
-            System.out.println(process.getProcessName() + " (Priority: " + process.getPriorityNumber() + ")");
+            System.out.println(process.getProcessName() + " (Priority: " + process.getPriority() + ")");
         }
     }
 }
