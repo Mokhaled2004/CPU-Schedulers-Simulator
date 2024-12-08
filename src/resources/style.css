@@ -8,14 +8,19 @@
 
 /* Label styles */
 .label {
-    -fx-text-fill: white;
+    -fx-text-fill: white;  /* Default white text color */
     -fx-font-size: 16px;
     -fx-padding: 5px;
 }
 
+/* Red Label style */
+.red-label {
+    -fx-text-fill: red;  /* Red text color */
+}
+
 /* Canvas styling */
 .canvas {
-    -fx-background-color: #333;
+    -fx-background-color: white;  /* White background for the canvas */
 }
 
 /* Button styling (if you have buttons in your UI) */
