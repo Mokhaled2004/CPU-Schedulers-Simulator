@@ -13,6 +13,9 @@ public class SJFNonPreemptiveScheduler extends Scheduler {
 
     @Override
     public void startScheduling() {
+        // Ensure processList is mutable
+        processList = new ArrayList<>(processList);
+
         // Step 1: Sort the processes by arrival time
         processList.sort(Comparator.comparingInt(Process::getArrivalTime));
 
