@@ -10,7 +10,7 @@ public class Process {
     private int priority;  // Priority field
 
     // Constructor that includes priority
-    public Process(String processName, String color, int arrivalTime, int burstTime, int waitingTime, int turnaroundTime, int priority) {
+    public Process(String processName, String color, int arrivalTime, int burstTime, int priority,int waitingTime, int turnaroundTime) {
         this.processName = processName;
         this.color = color;
         this.arrivalTime = arrivalTime;
