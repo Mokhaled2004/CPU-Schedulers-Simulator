@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.canvas.Canvas?>
+
+<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="gui.MainController" spacing="15" style="-fx-padding: 20; -fx-background-color: #2f2f2f;">
+
+    <!-- Add labels for the statistics -->
+    <Label fx:id="averageWaitingTimeLabel" text="Average Waiting Time: " />
+    <Label fx:id="averageTurnaroundTimeLabel" text="Average Turnaround Time: " />
+    <Label text="Execution Order:" />
+
+    <!-- Dynamic content will be added to this VBox -->
+    <VBox fx:id="processesContainer" spacing="5" />
+
+    <!-- Canvas for the process graph -->
+    <Canvas fx:id="schedulingCanvas" width="800" height="400" />
+</VBox>
