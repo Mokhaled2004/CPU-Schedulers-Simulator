@@ -8,6 +8,7 @@ public class Process {
     private int waitingTime;
     private int turnaroundTime;
     private int priority;  // Priority field
+    private int remainingTime;  // Remaining time field
 
     // Constructor that includes priority
     public Process(String processName, String color, int arrivalTime, int burstTime, int priority,int waitingTime, int turnaroundTime) {
@@ -49,6 +50,15 @@ public class Process {
         return priority;
     }
 
+    public int getRemainingTime() {
+        return remainingTime;
+    }
+
+    // Setter for remaining time
+    public void setRemainingTime(int remainingTime) {
+        this.remainingTime = remainingTime;
+    }
+
     // Setters for waiting time and turnaround time
     public void setWaitingTime(int waitingTime) {
         this.waitingTime = waitingTime;
@@ -56,5 +66,9 @@ public class Process {
 
     public void setTurnaroundTime(int turnaroundTime) {
         this.turnaroundTime = turnaroundTime;
+    }
+
+    public void setPriority(int priority) {
+        this.priority = priority;  // Add setter for priority
     }
 }

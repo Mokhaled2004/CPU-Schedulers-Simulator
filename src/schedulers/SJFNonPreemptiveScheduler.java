@@ -30,13 +30,33 @@ public class SJFNonPreemptiveScheduler extends Scheduler {
                 }
             }
 
-            // Step 3: Select the process with the shortest burst time
-            readyQueue.sort(Comparator.comparingInt(Process::getBurstTime));
+            // Step 3: Decrease priority for processes in the ready queue to prevent starvation
+            Process longestBurstProcess = null;
+            int maxBurstTime = Integer.MIN_VALUE;
+
+            // Find the process with the longest burst time in the ready queue
+            for (Process process : readyQueue) {
+                if (process.getBurstTime() > maxBurstTime) {
+                    maxBurstTime = process.getBurstTime();
+                    longestBurstProcess = process;
+                }
+            }
+
+            // If there's a process with the longest burst time, decrease its priority
+            if (longestBurstProcess != null) {
+                longestBurstProcess.setPriority(Math.max(1, longestBurstProcess.getPriority() - 1)); // Decrease priority but ensure it doesn't go below 1
+            }
+
+
+
+            // Step 4: Select the process with the shortest burst time and highest priority
+            readyQueue.sort(Comparator.comparingInt((Process p) -> p.getBurstTime())
+                    .thenComparingInt(Process::getPriority));
 
             if (!readyQueue.isEmpty()) {
                 Process currentProcess = readyQueue.remove(0);
 
-                // Step 4: Execute the process
+                // Step 5: Execute the selected process
                 currentTime = Math.max(currentTime, currentProcess.getArrivalTime()) + currentProcess.getBurstTime();
                 currentProcess.setWaitingTime(currentTime - currentProcess.getArrivalTime() - currentProcess.getBurstTime());
                 currentProcess.setTurnaroundTime(currentTime - currentProcess.getArrivalTime());
@@ -47,7 +67,7 @@ public class SJFNonPreemptiveScheduler extends Scheduler {
             }
         }
 
-        // Step 5: Update the process list with the scheduled data
+        // Step 6: Update the process list with the scheduled data
         this.processList = completedProcesses;
 
         // Display results
@@ -76,27 +96,30 @@ public class SJFNonPreemptiveScheduler extends Scheduler {
 
     @Override
     public double calculateAverageWaitingTime() {
-        return processList.stream()
-                .mapToDouble(Process::getWaitingTime)
-                .average()
-                .orElse(0.0);
+        int totalWaitingTime = 0;
+        for (Process process : processList) {
+            totalWaitingTime += process.getWaitingTime();
+        }
+        return Math.ceil(totalWaitingTime / (double) processList.size());
     }
-
+    
     @Override
     public double calculateAverageTurnaroundTime() {
-        return processList.stream()
-                .mapToDouble(Process::getTurnaroundTime)
-                .average()
-                .orElse(0.0);
+        int totalTurnaroundTime = 0;
+        for (Process process : processList) {
+            totalTurnaroundTime += process.getTurnaroundTime();
+        }
+        return Math.ceil(totalTurnaroundTime / (double) processList.size());
     }
+    
 
     @Override
     public void displayExecutionOrder() {
-        System.out.println("Execution Order:");
+        System.out.println("Execution Order : ");
         for (Process process : processList) {
             System.out.println(process.getProcessName() +
-                    " [WT: " + process.getWaitingTime() +
-                    ", TAT: " + process.getTurnaroundTime() + "]");
+                    ", Waiting Time: " + process.getWaitingTime() +
+                    ", Turnaround Time: " + process.getTurnaroundTime() + ")");
         }
     }
 }

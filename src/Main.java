@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 import java.util.List;
 import models.Process;
-import schedulers.PriorityScheduler;
+import schedulers.SRTFScheduler;
 
 public class Main {
     public static void main(String[] args) {
@@ -19,13 +19,11 @@ public class Main {
         processList.add(p4);
 
         // Step 3: Initialize the SJF Non-Preemptive Scheduler
-        PriorityScheduler scheduler = new PriorityScheduler(processList);
+        SRTFScheduler scheduler = new SRTFScheduler(processList,1,2,5);
 
         // Step 4: Start scheduling
         scheduler.startScheduling();
 
-        // Step 5: Display average times
-        System.out.println("Average Waiting Time: " + scheduler.calculateAverageWaitingTime());
-        System.out.println("Average Turnaround Time: " + scheduler.calculateAverageTurnaroundTime());
+        
     }
 }
