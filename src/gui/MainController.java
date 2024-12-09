@@ -1,6 +1,6 @@
 package gui;
 
-import javafx.collections.FXCollections;  // Import FXCollections
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -68,7 +68,7 @@ public class MainController {
                 scheduler = new PriorityScheduler(createProcessList(), contextSwitchTime);
                 break;
             case "SRTF":
-                //scheduler = new SRTFScheduler(createProcessList());
+                // scheduler = new SRTFScheduler(createProcessList());
                 break;
             default:
                 scheduler = new SJFNonPreemptiveScheduler(createProcessList()); // Default to SJF

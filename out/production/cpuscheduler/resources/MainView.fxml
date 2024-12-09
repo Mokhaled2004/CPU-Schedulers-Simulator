@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.control.Label?>
@@ -11,28 +10,22 @@
 <GridPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
           fx:controller="gui.MainController" hgap="10" vgap="10" style="-fx-padding: 20; -fx-background-color: #2f2f2f;">
 
-    <!-- Define the columns with equal widths (1/3 each) -->
     <columnConstraints>
         <ColumnConstraints percentWidth="33.33"/>
         <ColumnConstraints percentWidth="33.33"/>
         <ColumnConstraints percentWidth="33.33"/>
     </columnConstraints>
 
-    <!-- Row 1, Column 1 and Column 2 (Graph Area) -->
     <VBox fx:id="graphContainer" style="-fx-margin-left: 20px;" spacing="10" GridPane.rowIndex="0" GridPane.columnIndex="0" GridPane.columnSpan="2">
-        <Label text="CPU Scheduling Graph" style="-fx-text-fill: red;"/>  <!-- Red text label -->
+        <Label text="CPU Scheduling Graph" style="-fx-text-fill: red;"/>
 
-        <!-- Canvas for Graph -->
         <Canvas fx:id="schedulingCanvas" width="800" height="400"/>
     </VBox>
 
-    <!-- Row 1, Column 3 (Process Properties in Table Format) -->
     <VBox fx:id="processPropertiesContainer" style="-fx-margin-left: 20px;" spacing="10" GridPane.rowIndex="0" GridPane.columnIndex="2">
-        <Label text="Process Properties" style="-fx-text-fill: red;"/>  <!-- Red text label -->
+        <Label text="Process Properties" style="-fx-text-fill: red;"/>
 
-        <!-- Create a GridPane to display process properties in a table-like format -->
         <GridPane fx:id="processTable" hgap="10" vgap="10" GridPane.rowIndex="1" GridPane.columnIndex="2">
-            <!-- Table header -->
             <Label text="PID" style="-fx-text-fill: white;" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
             <Label text="Priority" style="-fx-text-fill: white;" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
             <Label text="Color" style="-fx-text-fill: white;" GridPane.rowIndex="0" GridPane.columnIndex="2"/>
@@ -41,26 +34,18 @@
         </GridPane>
     </VBox>
 
-    <!-- Row 2, Column 1 and Column 2 (Statistics) -->
     <VBox fx:id="statisticsContainer" style="-fx-margin-left: 20px;" spacing="10" GridPane.rowIndex="1" GridPane.columnIndex="0" GridPane.columnSpan="3">
-        <Label text="Statistics" style="-fx-text-fill: red;"/>  <!-- Red text label -->
+        <Label text="Statistics" style="-fx-text-fill: red;"/>
 
-        <!-- Row 2, Column 1 (Statistics: Average Waiting Time) -->
         <Label fx:id="averageWaitingTimeLabel" text="Average Waiting Time: " style="-fx-text-fill: white;"/>
-
-        <!-- Row 2, Column 2 (Statistics: Average Turnaround Time) -->
         <Label fx:id="averageTurnaroundTimeLabel" text="Average Turnaround Time: " style="-fx-text-fill: white;"/>
     </VBox>
 
-    <!-- Row 3, Column 1 and Column 2 (Execution Order) -->
-    <Label fx:id="executionOrderLabel" text="Execution Order:" GridPane.rowIndex="2" GridPane.columnIndex="0" GridPane.columnSpan="3" style="-fx-text-fill: white;"/>  <!-- White text label -->
+    <Label fx:id="executionOrderLabel" text="Execution Order:" GridPane.rowIndex="2" GridPane.columnIndex="0" GridPane.columnSpan="3" style="-fx-text-fill: white;"/>
 
-    <!-- Row 4, Column 1 (Scheduler Selection ComboBox) -->
     <VBox GridPane.rowIndex="3" GridPane.columnIndex="0" GridPane.columnSpan="3" style="-fx-margin-top: 20px;">
         <Label text="Select Scheduling Algorithm" style="-fx-text-fill: red;"/>
-        <ComboBox fx:id="schedulerTypeComboBox" style="-fx-background-color: #333333; -fx-text-fill: white; -fx-border-color: red; -fx-border-width: 1px;">
-            <!-- You will populate the ComboBox items programmatically in the controller -->
-        </ComboBox>
+        <ComboBox fx:id="schedulerTypeComboBox" style="-fx-background-color: #333333; -fx-text-fill: white; -fx-border-color: red; -fx-border-width: 1px;"/>
     </VBox>
 
 </GridPane>

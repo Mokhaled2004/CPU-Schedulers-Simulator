@@ -10,14 +10,12 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/MainView.fxml")); // Assuming MainView.fxml is in resources folder
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/resources/MainView.fxml"));
         Parent root = loader.load();
-
-        primaryStage.setTitle("CPU Scheduler Visualization");
-        primaryStage.setScene(new Scene(root, 2000, 700));
+        Scene scene = new Scene(root);
+        primaryStage.setScene(scene);
         primaryStage.show();
     }
-
 
     public static void main(String[] args) {
         launch(args);
