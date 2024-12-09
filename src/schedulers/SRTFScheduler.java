@@ -17,6 +17,7 @@ public class SRTFScheduler extends Scheduler {
     public void startScheduling() {
         List<Process> executedProcesses = new ArrayList<>();
         int currentTime = 0;
+        processList = new ArrayList<>(processList);
 
         // Initialize the remaining times and pause times for all processes
         for (Process process : processList) {
@@ -70,13 +71,12 @@ public class SRTFScheduler extends Scheduler {
 
                 // If the current process finishes
                 if (currentProcess.getRemainingTime() == 0) {
-
                     currentTime += contextSwitchTime;  // Handle context switch time after completion
                     currentProcess.setTurnaroundTime(currentTime - currentProcess.getArrivalTime());
                     currentProcess.setWaitingTime(currentProcess.getTurnaroundTime() - currentProcess.getBurstTime());
+                    currentProcess.setEndTime(currentTime); // Set the end time of the process
                     executedProcesses.add(currentProcess);
                     currentProcess = null;  // Reset current process
-
                 }
             } else {
                 // If no process is running, increment the time
@@ -117,7 +117,8 @@ public class SRTFScheduler extends Scheduler {
         for (Process process : processList) {
             System.out.println(process.getProcessName() +
                     ", Waiting Time: " + process.getWaitingTime() +
-                    ", Turnaround Time: " + process.getTurnaroundTime());
+                    ", Turnaround Time: " + process.getTurnaroundTime() +
+                    ", End Time: " + process.getEndTime());
         }
     }
 }

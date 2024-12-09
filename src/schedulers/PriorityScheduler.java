@@ -18,6 +18,8 @@ public class PriorityScheduler extends Scheduler {
         List<Process> readyQueue = new ArrayList<>();
         int currentTime = 0;
 
+        processList = new ArrayList<>(processList);
+
         // Keep track of the order of execution for display
         List<Process> executedProcesses = new ArrayList<>();
         List<Process> remainingProcesses = new ArrayList<>(processList);  // Create a copy of the process list
@@ -46,7 +48,7 @@ public class PriorityScheduler extends Scheduler {
             });
 
             // Pick the process with the highest priority
-            Process currentProcess = readyQueue.removeFirst();
+            Process currentProcess = readyQueue.remove(0);  // Use remove(0) instead of removeFirst() (no LinkedList)
 
             // Calculate start time (either current time or the arrival time, whichever is greater)
             int startTime = Math.max(currentTime, currentProcess.getArrivalTime());
@@ -59,6 +61,9 @@ public class PriorityScheduler extends Scheduler {
 
             // Set waiting time: Waiting Time = Turnaround Time - Burst Time
             currentProcess.setWaitingTime(currentProcess.getTurnaroundTime() - currentProcess.getBurstTime());
+
+            // Set end time for the process
+            currentProcess.setEndTime(completionTime);
 
             // Update current time after the process finishes
             currentTime = completionTime;
@@ -101,7 +106,8 @@ public class PriorityScheduler extends Scheduler {
         for (Process process : processList) {
             System.out.println(process.getProcessName() +
                     ", Waiting Time: " + process.getWaitingTime() +
-                    ", Turnaround Time: " + process.getTurnaroundTime() + ")");
+                    ", Turnaround Time: " + process.getTurnaroundTime() +
+                    ", End Time: " + process.getEndTime());  // Display end time
         }
     }
 }
