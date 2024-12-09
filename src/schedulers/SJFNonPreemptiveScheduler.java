@@ -37,7 +37,6 @@ public class SJFNonPreemptiveScheduler extends Scheduler {
             Process longestBurstProcess = null;
             int maxBurstTime = Integer.MIN_VALUE;
 
-            // Find the process with the longest burst time in the ready queue
             for (Process process : readyQueue) {
                 if (process.getBurstTime() > maxBurstTime) {
                     maxBurstTime = process.getBurstTime();
@@ -45,24 +44,25 @@ public class SJFNonPreemptiveScheduler extends Scheduler {
                 }
             }
 
-            // If there's a process with the longest burst time, decrease its priority
             if (longestBurstProcess != null) {
-                longestBurstProcess.setPriority(Math.max(1, longestBurstProcess.getPriority() - 1)); // Decrease priority but ensure it doesn't go below 1
+                longestBurstProcess.setPriority(Math.max(1, longestBurstProcess.getPriority() - 1));
             }
 
-
-
             // Step 4: Select the process with the shortest burst time and highest priority
-            readyQueue.sort(Comparator.comparingInt((Process p) -> p.getBurstTime())
-                    .thenComparingInt(Process::getPriority));
+            readyQueue.sort(Comparator.comparingInt(Process::getBurstTime).thenComparingInt(Process::getPriority));
 
             if (!readyQueue.isEmpty()) {
                 Process currentProcess = readyQueue.remove(0);
 
-                // Step 5: Execute the selected process
-                currentTime = Math.max(currentTime, currentProcess.getArrivalTime()) + currentProcess.getBurstTime();
-                currentProcess.setWaitingTime(currentTime - currentProcess.getArrivalTime() - currentProcess.getBurstTime());
-                currentProcess.setTurnaroundTime(currentTime - currentProcess.getArrivalTime());
+                // Step 5: Set start and end times
+                currentProcess.setStartTime(Math.max(currentTime, currentProcess.getArrivalTime()));
+                currentProcess.setEndTime(currentProcess.getStartTime() + currentProcess.getBurstTime());
+
+                // Update current time and calculate waiting and turnaround times
+                currentTime = (int) currentProcess.getEndTime();
+                currentProcess.setWaitingTime(currentProcess.getStartTime() - currentProcess.getArrivalTime());
+                currentProcess.setTurnaroundTime((int) (currentProcess.getEndTime() - currentProcess.getArrivalTime()));
+
                 completedProcesses.add(currentProcess);
             } else {
                 // If no process is ready, increment the current time
@@ -78,6 +78,7 @@ public class SJFNonPreemptiveScheduler extends Scheduler {
         System.out.printf("Average Waiting Time: %.2f\n", calculateAverageWaitingTime());
         System.out.printf("Average Turnaround Time: %.2f\n", calculateAverageTurnaroundTime());
     }
+
 
     @Override
     protected void calculateWaitingTime() {
