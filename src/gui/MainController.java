@@ -1,6 +1,6 @@
 package gui;
 
-import javafx.collections.FXCollections;  // Import FXCollections
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -17,6 +17,7 @@ import java.util.List;
 public class MainController {
 
     public VBox graphContainer;
+
     @FXML
     private Canvas schedulingCanvas;
 
@@ -44,24 +45,29 @@ public class MainController {
         // Initialize ComboBox with scheduler options
         schedulerTypeComboBox.setItems(FXCollections.observableArrayList("FCFS", "SJF", "Priority", "SRTF"));
 
-        // Set the default scheduler
-        schedulerTypeComboBox.setValue("SJF");
-
         // Set listener for ComboBox selection
-        schedulerTypeComboBox.setOnAction(event -> updateScheduler());
-
-        // Initialize the first scheduler
-        updateScheduler();
+        schedulerTypeComboBox.setOnAction(event -> {
+            if (schedulerTypeComboBox.getValue() != null) {
+                updateScheduler();
+            } else {
+                System.out.println("Please select a scheduler!");
+            }
+        });
     }
 
     private void updateScheduler() {
         String selectedScheduler = schedulerTypeComboBox.getValue();
-        System.out.println("Selected Scheduler: " + selectedScheduler);  // Debugging line
+        if (selectedScheduler == null || selectedScheduler.isEmpty()) {
+            System.out.println("No scheduler selected.");
+            return;
+        }
+
+        System.out.println("Selected Scheduler: " + selectedScheduler);
 
         switch (selectedScheduler) {
             case "FCFS":
                 // Uncomment and use the correct FCFS implementation
-                // scheduler = new FCAIScheduler(createProcessList());
+                // scheduler = new FCFScheduler(createProcessList());
                 System.out.println("FCFS Scheduler selected");
                 break;
             case "SJF":
@@ -69,7 +75,7 @@ public class MainController {
                 System.out.println("SJF Scheduler selected");
                 break;
             case "Priority":
-                int contextSwitchTime = 1;  // You can get this value from user input or set as default
+                int contextSwitchTime = getContextSwitchTime();
                 scheduler = new PriorityScheduler(createProcessList(), contextSwitchTime);
                 System.out.println("Priority Scheduler selected");
                 break;
@@ -79,9 +85,8 @@ public class MainController {
                 System.out.println("SRTF Scheduler selected");
                 break;
             default:
-                scheduler = new PriorityScheduler(createProcessList(), 1); // Default to SJF
-                System.out.println("Default Scheduler (Priority) selected");
-                break;
+                System.out.println("Invalid scheduler type selected.");
+                return;
         }
 
         // Start scheduling and update UI
@@ -91,82 +96,93 @@ public class MainController {
         drawSchedulingGraph();
     }
 
+    private int getContextSwitchTime() {
+        // Placeholder for getting user input for context switch time, can be replaced with a proper dialog
+        return 1;
+    }
+
     private List<Process> createProcessList() {
-        Process p1 = new Process("P1", "Red", 0, 17, 4, 0, 0,4,0);  // Arrival time 0, Burst time 17
-        Process p2 = new Process("P2", "Blue", 3, 6, 9, 0, 0,3,0);  // Arrival time 3, Burst time 6
-        Process p3 = new Process("P3", "Green", 4, 10, 3, 0, 0,5,0); // Arrival time 4, Burst time 10
-        Process p4 = new Process("P4", "Yellow", 29, 4, 8, 0, 0,2,0); // Arrival time 29, Burst time 4
+        Process p1 = new Process("P1", "Red", 0, 17, 4, 0, 0, 4, 0);  // Arrival time 0, Burst time 17
+        Process p2 = new Process("P2", "Blue", 3, 6, 9, 0, 0, 3, 0);  // Arrival time 3, Burst time 6
+        Process p3 = new Process("P3", "Green", 4, 10, 3, 0, 0, 5, 0); // Arrival time 4, Burst time 10
+        Process p4 = new Process("P4", "Yellow", 29, 4, 8, 0, 0, 2, 0); // Arrival time 29, Burst time 4
         return List.of(p1, p2, p3, p4);
     }
 
     private void updateStatistics() {
         System.out.println("Updating statistics...");
-        averageWaitingTimeLabel.setText("Average Waiting Time: " + scheduler.calculateAverageWaitingTime());
-        averageTurnaroundTimeLabel.setText("Average Turnaround Time: " + scheduler.calculateAverageTurnaroundTime());
+        if (scheduler != null) {
+            averageWaitingTimeLabel.setText("Average Waiting Time: " + scheduler.calculateAverageWaitingTime());
+            averageTurnaroundTimeLabel.setText("Average Turnaround Time: " + scheduler.calculateAverageTurnaroundTime());
+        }
     }
-
     private void populateProcessTable() {
         System.out.println("Populating process table...");
-        int rowIndex = 1;
-        for (Process process : scheduler.getProcessList()) {
-            Label pidLabel = new Label(String.valueOf(process.getPid()));
-            pidLabel.setStyle("-fx-text-fill: white;");
 
-            Label priorityLabel = new Label(String.valueOf(process.getPriority()));
-            priorityLabel.setStyle("-fx-text-fill: white;");
+        // Remove all children except the header row (rowIndex = 0)
+        processTable.getChildren().removeIf(node -> GridPane.getRowIndex(node) != null && GridPane.getRowIndex(node) > 0);
 
-            Label colorLabel = new Label(process.getColor());
-            colorLabel.setStyle("-fx-text-fill: white;");
+        if (scheduler != null) {
+            int rowIndex = 1;
+            for (Process process : scheduler.getProcessList()) {
+                Label pidLabel = new Label(String.valueOf(process.getPid()));
+                Label priorityLabel = new Label(String.valueOf(process.getPriority()));
+                Label colorLabel = new Label(process.getColor());
+                Label processNumberLabel = new Label(String.valueOf(process.getProcessNumber()));
+                Label nameLabel = new Label(process.getProcessName());
 
-            Label processNumberLabel = new Label(String.valueOf(process.getProcessNumber()));
-            processNumberLabel.setStyle("-fx-text-fill: white;");
+                // Set the text color of all labels to white
+                String whiteTextStyle = "-fx-text-fill: white;";
+                pidLabel.setStyle(whiteTextStyle);
+                priorityLabel.setStyle(whiteTextStyle);
+                colorLabel.setStyle(whiteTextStyle);
+                processNumberLabel.setStyle(whiteTextStyle);
+                nameLabel.setStyle(whiteTextStyle);
 
-            Label nameLabel = new Label(process.getProcessName());
-            nameLabel.setStyle("-fx-text-fill: white;");
+                processTable.add(pidLabel, 0, rowIndex);
+                processTable.add(priorityLabel, 1, rowIndex);
+                processTable.add(colorLabel, 2, rowIndex);
+                processTable.add(processNumberLabel, 3, rowIndex);
+                processTable.add(nameLabel, 4, rowIndex);
 
-            processTable.add(pidLabel, 0, rowIndex);
-            processTable.add(priorityLabel, 1, rowIndex);
-            processTable.add(colorLabel, 2, rowIndex);
-            processTable.add(processNumberLabel, 3, rowIndex);
-            processTable.add(nameLabel, 4, rowIndex);
-
-            rowIndex++;
+                rowIndex++;
+            }
         }
     }
 
     private void drawSchedulingGraph() {
         System.out.println("Drawing scheduling graph...");
-        GraphicsContext gc = schedulingCanvas.getGraphicsContext2D();
+        if (scheduler != null) {
+            GraphicsContext gc = schedulingCanvas.getGraphicsContext2D();
+            gc.setFill(Color.LIGHTGRAY);
+            gc.fillRect(0, 0, schedulingCanvas.getWidth(), schedulingCanvas.getHeight());
 
-        gc.setFill(Color.LIGHTGRAY);
-        gc.fillRect(0, 0, schedulingCanvas.getWidth(), schedulingCanvas.getHeight());
+            int startY = 50;
+            int verticalSpacing = 50;
+            int rectHeight = 30;
+            int marginLeft = 10;
 
-        int startY = 50;
-        int verticalSpacing = 50;
-        int rectHeight = 30;
+            for (Process process : scheduler.getProcessList()) {
+                Color color = switch (process.getColor()) {
+                    case "Red" -> Color.RED;
+                    case "Blue" -> Color.BLUE;
+                    case "Green" -> Color.GREEN;
+                    case "Yellow" -> Color.YELLOW;
+                    default -> Color.GRAY;
+                };
 
-        int marginLeft = 10;
+                gc.setFill(color);
 
-        for (Process process : scheduler.getProcessList()) {
-            Color color = switch (process.getColor()) {
-                case "Red" -> Color.RED;
-                case "Blue" -> Color.BLUE;
-                case "Green" -> Color.GREEN;
-                case "Yellow" -> Color.YELLOW;
-                default -> Color.GRAY;
-            };
+                double rectWidth = (process.getEndTime() - process.getStartTime()) * 20;
+                gc.fillRect(process.getStartTime() * 20 + marginLeft, startY, rectWidth, rectHeight);
 
-            gc.setFill(color);
+                gc.setFill(Color.WHITE);
+                double textX = marginLeft - 5;
+                double textY = startY + (double) rectHeight / 2 + 5;
+                gc.fillText(process.getProcessName(), textX, textY);
 
-            double rectWidth = (process.getEndTime() - process.getStartTime()) * 20;
-            gc.fillRect(process.getStartTime() * 20 + marginLeft, startY, rectWidth, rectHeight);
-
-            gc.setFill(Color.BLACK);
-            double textX = marginLeft - 5;
-            double textY = startY + (double) rectHeight / 2 + 5;
-            gc.fillText(process.getProcessName(), textX, textY);
-
-            startY += verticalSpacing;
+                startY += verticalSpacing;
+            }
         }
     }
 }
