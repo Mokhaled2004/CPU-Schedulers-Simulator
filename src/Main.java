@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 import java.util.List;
 import models.Process;
-import schedulers.FCAIScheduler;
+import schedulers.SrtfStarvation;
 
 public class Main {
     public static void main(String[] args) {
@@ -19,9 +19,9 @@ public class Main {
         processList.add(p4);
 
         // Step 3: Initialize the SRTF Scheduler with context switch time = 1, aging interval = 2, max wait time = 25
-        FCAIScheduler scheduler = new FCAIScheduler(processList);
+        SrtfStarvation scheduler = new SrtfStarvation(processList,1,1);
 
         // Step 4: Start scheduling
-        scheduler.execute();
+        scheduler.startScheduling();
     }
 }
