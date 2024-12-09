@@ -6,10 +6,10 @@ import schedulers.SRTFScheduler;
 public class Main {
     public static void main(String[] args) {
         // Step 1: Create process objects
-        Process p1 = new Process("P1", "Red", 0, 17, 4, 0,0);  // Arrival time 0, Burst time 8
-        Process p2 = new Process("P2", "Blue", 3, 6, 9, 0,0); // Arrival time 1, Burst time 4
-        Process p3 = new Process("P3", "Green", 4, 10, 3, 0,0); // Arrival time 2, Burst time 9
-        Process p4 = new Process("P4", "Yellow", 29, 4, 8, 0,0); // Arrival time 3, Burst time 5
+        Process p1 = new Process("P1", "Red", 0, 17, 4, 0, 0,4,0);  // Arrival time 0, Burst time 17
+        Process p2 = new Process("P2", "Blue", 3, 6, 9, 0, 0,3,0);  // Arrival time 3, Burst time 6
+        Process p3 = new Process("P3", "Green", 4, 10, 3, 0, 0,5,0); // Arrival time 4, Burst time 10
+        Process p4 = new Process("P4", "Yellow", 29, 4, 8, 0, 0,2,0); // Arrival time 29, Burst time 4
 
         // Step 2: Add processes to the list
         List<Process> processList = new ArrayList<>();
@@ -18,12 +18,10 @@ public class Main {
         processList.add(p3);
         processList.add(p4);
 
-        // Step 3: Initialize the SJF Non-Preemptive Scheduler
-        SRTFScheduler scheduler = new SRTFScheduler(processList,1,2,5);
+        // Step 3: Initialize the SRTF Scheduler with context switch time = 1, aging interval = 2, max wait time = 25
+        SRTFScheduler scheduler = new SRTFScheduler(processList,1);
 
         // Step 4: Start scheduling
         scheduler.startScheduling();
-
-        
     }
 }

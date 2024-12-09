@@ -2,82 +2,92 @@ package schedulers;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.PriorityQueue;
 import models.Process;
 
 public class SRTFScheduler extends Scheduler {
+    protected int contextSwitchTime; // Context switch time between processes
 
-    private int contextSwitchTime;  // Variable to hold the context switch time
-    private int agingInterval;      // Time interval for aging to fix starvation
-    private int maxWaitTime;        // Maximum wait time before aging is applied
-
-    public SRTFScheduler(List<Process> processList, int contextSwitchTime, int agingInterval, int maxWaitTime) {
+    public SRTFScheduler(List<Process> processList, int contextSwitchTime) {
         super(processList);
         this.contextSwitchTime = contextSwitchTime;
-        this.agingInterval = agingInterval;
-        this.maxWaitTime = maxWaitTime;
     }
 
     @Override
     public void startScheduling() {
-        List<Process> readyQueue = new ArrayList<>();
+        List<Process> executedProcesses = new ArrayList<>();
         int currentTime = 0;
 
-        // Keep track of the order of execution for display
-        List<Process> executedProcesses = new ArrayList<>();
+        // Initialize the remaining times and pause times for all processes
+        for (Process process : processList) {
+            process.setRemainingTime(process.getBurstTime());
+            process.setStartTime(-1); // Initialize startTime to -1
+        }
 
-        // Track the time each process has been in the system
-        int[] waitTimes = new int[processList.size()];
+        Process currentProcess = null; // Current running process
 
-        while (!processList.isEmpty() || !readyQueue.isEmpty()) {
-            // Add processes to the ready queue if they've arrived
+        // Use PriorityQueue to always select the process with the shortest remaining burst time
+        PriorityQueue<Process> readyQueue = new PriorityQueue<>(
+            (p1, p2) -> Integer.compare(p1.getRemainingTime(), p2.getRemainingTime()) // Sort by remaining burst time
+        );
+
+        // Start the scheduling loop
+        while (!processList.isEmpty() || !readyQueue.isEmpty() || currentProcess != null) {
+            // Add processes to the ready queue if they have arrived at currentTime
             for (int i = 0; i < processList.size(); i++) {
                 Process process = processList.get(i);
                 if (process.getArrivalTime() <= currentTime) {
                     readyQueue.add(process);
                     processList.remove(i);
-                    i--; // Adjust index after removing a process
+                    i--; // Adjust index after removal
                 }
             }
 
-            // If the ready queue is empty, move time forward
-            if (readyQueue.isEmpty()) {
+            // Check for preemption: If a new process arrives with a shorter remaining time than the current process
+            if (currentProcess != null && !readyQueue.isEmpty() && readyQueue.peek().getRemainingTime() < currentProcess.getRemainingTime()) {
+                currentTime += contextSwitchTime;  // Account for context switch time
+                readyQueue.add(currentProcess);  // Re-add the current process to the queue
+                currentProcess = readyQueue.poll();  // Switch to the new process
+            }
+
+            // If no process is running, pick the next one from the queue
+            if (currentProcess == null && !readyQueue.isEmpty()) {
+                currentProcess = readyQueue.poll();
+                if (currentTime > currentProcess.getRemainingTime()) {
+                    currentProcess.setTotalWaitingTime(currentProcess.getTotalWaitingTime() + (currentTime - currentProcess.getRemainingTime()));
+                }
+            }
+
+            // Execute the current process for 1 unit of time
+            if (currentProcess != null) {
+                // Set the start time only the first time the process runs
+                if (currentProcess.getStartTime() == -1) {
+                    currentProcess.setStartTime(currentTime);
+                }
+
+                currentProcess.setRemainingTime(currentProcess.getRemainingTime() - 1);
                 currentTime++;
-                continue;
-            }
 
-            // Sort the ready queue by remaining burst time (ascending order)
-            readyQueue.sort((p1, p2) -> Integer.compare(p1.getRemainingTime(), p2.getRemainingTime()));
-
-            // Pick the process with the shortest remaining time
-            Process currentProcess = readyQueue.get(0);
-
-            // Handle starvation by aging processes (reduce remaining time)
-            for (Process p : readyQueue) {
-                if (currentTime - p.getArrivalTime() > maxWaitTime) {
-                    p.setRemainingTime(Math.max(p.getRemainingTime() - agingInterval, p.getBurstTime() / 2));
+                // If the current process finishes
+                if (currentProcess.getRemainingTime() == 0) {
+                    
+                    currentTime += contextSwitchTime;  // Handle context switch time after completion
+                    currentProcess.setTurnaroundTime(currentTime - currentProcess.getStartTime());
+                    currentProcess.setWaitingTime(currentProcess.getTurnaroundTime() - currentProcess.getBurstTime());
+                    executedProcesses.add(currentProcess);
+                    currentProcess = null;  // Reset current process
+                    
                 }
+            } else {
+                // If no process is running, increment the time
+                currentTime++;
             }
-
-            // Calculate the time the process will complete
-            int remainingTime = currentProcess.getRemainingTime();
-            currentProcess.setRemainingTime(remainingTime - 1);  // Decrease the remaining burst time
-
-            // If the process finishes, calculate turnaround and waiting time
-            if (currentProcess.getRemainingTime() == 0) {
-                currentProcess.setTurnaroundTime(currentTime + 1 - currentProcess.getArrivalTime());
-                currentProcess.setWaitingTime(currentProcess.getTurnaroundTime() - currentProcess.getBurstTime());
-                executedProcesses.add(currentProcess);
-                readyQueue.remove(currentProcess);
-            }
-
-            // Apply context switch time after each process execution
-            currentTime++;
-            currentTime += contextSwitchTime;
         }
 
-        // Replace the original list with executed processes (ordered execution)
+        // Store executed processes back into processList for further use
         processList.addAll(executedProcesses);
 
+        // Display execution order and average times
         displayExecutionOrder();
         System.out.printf("Average Waiting Time: %.2f\n", calculateAverageWaitingTime());
         System.out.printf("Average Turnaround Time: %.2f\n", calculateAverageTurnaroundTime());
@@ -89,7 +99,7 @@ public class SRTFScheduler extends Scheduler {
         for (Process process : processList) {
             totalWaitingTime += process.getWaitingTime();
         }
-        return Math.ceil(totalWaitingTime / (double) processList.size());
+        return totalWaitingTime / (double) processList.size();
     }
 
     @Override
@@ -98,16 +108,16 @@ public class SRTFScheduler extends Scheduler {
         for (Process process : processList) {
             totalTurnaroundTime += process.getTurnaroundTime();
         }
-        return Math.ceil(totalTurnaroundTime / (double) processList.size());
+        return totalTurnaroundTime / (double) processList.size();
     }
 
     @Override
     public void displayExecutionOrder() {
-        System.out.println("Execution Order (Shortest Remaining Time First with Context Switching): ");
+        System.out.println("Execution Order (Shortest Remaining Time First):");
         for (Process process : processList) {
             System.out.println(process.getProcessName() +
                     ", Waiting Time: " + process.getWaitingTime() +
-                    ", Turnaround Time: " + process.getTurnaroundTime() + ")");
+                    ", Turnaround Time: " + process.getTurnaroundTime());
         }
     }
 }
