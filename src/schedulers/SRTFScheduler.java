@@ -72,7 +72,7 @@ public class SRTFScheduler extends Scheduler {
                 if (currentProcess.getRemainingTime() == 0) {
                     
                     currentTime += contextSwitchTime;  // Handle context switch time after completion
-                    currentProcess.setTurnaroundTime(currentTime - currentProcess.getStartTime());
+                    currentProcess.setTurnaroundTime(currentTime - currentProcess.getArrivalTime());
                     currentProcess.setWaitingTime(currentProcess.getTurnaroundTime() - currentProcess.getBurstTime());
                     executedProcesses.add(currentProcess);
                     currentProcess = null;  // Reset current process
