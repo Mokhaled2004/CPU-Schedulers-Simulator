@@ -76,18 +76,19 @@ public class MainController {
                 break;
             case "Priority":
                 int contextSwitchTime = getContextSwitchTime();
-                scheduler = new PriorityScheduler(createProcessList(), contextSwitchTime);
+                scheduler = new PriorityScheduler(createProcessList(), 1);
                 System.out.println("Priority Scheduler selected");
                 break;
             case "SRTF":
                 // Uncomment and use the correct SRTF implementation
-                // scheduler = new SRTFScheduler(createProcessList());
+                scheduler = new SRTFScheduler(createProcessList(),1);
                 System.out.println("SRTF Scheduler selected");
                 break;
             default:
                 System.out.println("Invalid scheduler type selected.");
                 return;
         }
+
 
         // Start scheduling and update UI
         populateProcessTable();
