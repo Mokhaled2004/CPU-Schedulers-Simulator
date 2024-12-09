@@ -6,6 +6,7 @@
 <?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.control.ComboBox?>
 
 <GridPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
           fx:controller="gui.MainController" hgap="10" vgap="10" style="-fx-padding: 20; -fx-background-color: #2f2f2f;">
@@ -53,5 +54,13 @@
 
     <!-- Row 3, Column 1 and Column 2 (Execution Order) -->
     <Label fx:id="executionOrderLabel" text="Execution Order:" GridPane.rowIndex="2" GridPane.columnIndex="0" GridPane.columnSpan="3" style="-fx-text-fill: white;"/>  <!-- White text label -->
+
+    <!-- Row 4, Column 1 (Scheduler Selection ComboBox) -->
+    <VBox GridPane.rowIndex="3" GridPane.columnIndex="0" GridPane.columnSpan="3" style="-fx-margin-top: 20px;">
+        <Label text="Select Scheduling Algorithm" style="-fx-text-fill: red;"/>
+        <ComboBox fx:id="schedulerTypeComboBox" style="-fx-background-color: #333333; -fx-text-fill: white; -fx-border-color: red; -fx-border-width: 1px;">
+            <!-- You will populate the ComboBox items programmatically in the controller -->
+        </ComboBox>
+    </VBox>
 
 </GridPane>

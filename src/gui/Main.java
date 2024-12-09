@@ -14,7 +14,7 @@ public class Main extends Application {
         Parent root = loader.load();
 
         primaryStage.setTitle("CPU Scheduler Visualization");
-        primaryStage.setScene(new Scene(root, 2000, 600));
+        primaryStage.setScene(new Scene(root, 2000, 700));
         primaryStage.show();
     }
 

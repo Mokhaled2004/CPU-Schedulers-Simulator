@@ -13,10 +13,7 @@ public class SJFNonPreemptiveScheduler extends Scheduler {
 
     @Override
     public void startScheduling() {
-        // Ensure processList is mutable
         processList = new ArrayList<>(processList);
-
-        // Step 1: Sort the processes by arrival time
         processList.sort(Comparator.comparingInt(Process::getArrivalTime));
 
         int currentTime = 0;
@@ -24,7 +21,7 @@ public class SJFNonPreemptiveScheduler extends Scheduler {
         List<Process> completedProcesses = new ArrayList<>();
 
         while (completedProcesses.size() < processList.size()) {
-            // Step 2: Add processes that have arrived to the ready queue
+            // Add processes that have arrived to the ready queue
             for (Process process : processList) {
                 if (!completedProcesses.contains(process) && process.getArrivalTime() <= currentTime) {
                     if (!readyQueue.contains(process)) {
@@ -33,65 +30,31 @@ public class SJFNonPreemptiveScheduler extends Scheduler {
                 }
             }
 
-            // Step 3: Select the process with the shortest burst time
+            // Sort by burst time to simulate SJF
             readyQueue.sort(Comparator.comparingInt(Process::getBurstTime));
 
             if (!readyQueue.isEmpty()) {
                 Process currentProcess = readyQueue.remove(0);
 
-                // Step 4: Execute the process
+                // Store the start and end times for Gantt chart
+                currentProcess.setStartTime(currentTime);
                 currentTime = Math.max(currentTime, currentProcess.getArrivalTime()) + currentProcess.getBurstTime();
+                currentProcess.setEndTime(currentTime);
+
                 currentProcess.setWaitingTime(currentTime - currentProcess.getArrivalTime() - currentProcess.getBurstTime());
                 currentProcess.setTurnaroundTime(currentTime - currentProcess.getArrivalTime());
                 completedProcesses.add(currentProcess);
             } else {
-                // If no process is ready, increment the current time
                 currentTime++;
             }
         }
 
-        // Step 5: Update the process list with the scheduled data
         this.processList = completedProcesses;
-
-        // Display results
         displayExecutionOrder();
         System.out.printf("Average Waiting Time: %.2f\n", calculateAverageWaitingTime());
         System.out.printf("Average Turnaround Time: %.2f\n", calculateAverageTurnaroundTime());
     }
 
-    @Override
-    protected void calculateWaitingTime() {
-        for (Process process : processList) {
-            process.setWaitingTime(
-                    process.getTurnaroundTime() - process.getBurstTime()
-            );
-        }
-    }
-
-    @Override
-    protected void calculateTurnaroundTime() {
-        for (Process process : processList) {
-            process.setTurnaroundTime(
-                    process.getWaitingTime() + process.getBurstTime()
-            );
-        }
-    }
-
-    @Override
-    public double calculateAverageWaitingTime() {
-        return processList.stream()
-                .mapToDouble(Process::getWaitingTime)
-                .average()
-                .orElse(0.0);
-    }
-
-    @Override
-    public double calculateAverageTurnaroundTime() {
-        return processList.stream()
-                .mapToDouble(Process::getTurnaroundTime)
-                .average()
-                .orElse(0.0);
-    }
 
     @Override
     public void displayExecutionOrder() {
