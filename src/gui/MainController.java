@@ -6,6 +6,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import models.Process;
 import schedulers.SJFNonPreemptiveScheduler;
 
@@ -89,22 +90,33 @@ public class MainController {
 
     private void drawSchedulingGraph() {
         GraphicsContext gc = schedulingCanvas.getGraphicsContext2D();
+
+        // Set the canvas background to light gray for better contrast
+        gc.setFill(Color.LIGHTGRAY);
+        gc.fillRect(0, 0, schedulingCanvas.getWidth(), schedulingCanvas.getHeight());
+
         int startX = 50; // Starting X position for drawing
 
         // Draw the scheduling graph on the canvas
         for (Process process : scheduler.getProcessList()) {
+            // Match the process color
             Color color = switch (process.getColor()) {
                 case "Red" -> Color.RED;
                 case "Blue" -> Color.BLUE;
-                case "Green" -> Color.GREEN;
+                case "Green" -> Color.GREEN; // Ensure exact match for "Green"
                 case "Yellow" -> Color.YELLOW;
                 default -> Color.GRAY;
             };
 
             gc.setFill(color);
             // Draw a rectangle for each process based on its burst time
-            gc.fillRect(startX, 100, process.getBurstTime() * 50, 30);
-            startX += process.getBurstTime() * 50; // Update the X position for the next process
+            gc.fillRect(startX, 100, process.getBurstTime() * 20, 30);
+
+            // Add the process name as a label above the rectangle
+            gc.setFill(Color.BLACK); // Text color
+            gc.fillText(process.getProcessName(), startX + (process.getBurstTime() * 15), 90);
+
+            startX += process.getBurstTime() * 20; // Update the X position for the next process
         }
     }
 }

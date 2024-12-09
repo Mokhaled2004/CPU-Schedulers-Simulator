@@ -57,4 +57,12 @@ public class Process {
     public void setTurnaroundTime(int turnaroundTime) {
         this.turnaroundTime = turnaroundTime;
     }
+
+    public int getPid() {
+        return 1;
+    }
+
+    public int getProcessNumber() {
+        return 1;
+    }
 }
