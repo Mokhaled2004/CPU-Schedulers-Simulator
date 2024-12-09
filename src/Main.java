@@ -19,7 +19,7 @@ public class Main {
         processList.add(p4);
 
         // Step 3: Initialize the SRTF Scheduler with context switch time = 1, aging interval = 2, max wait time = 25
-        SrtfStarvation scheduler = new SrtfStarvation(processList,1,1);
+        SrtfStarvation scheduler = new SrtfStarvation(processList,1,1,25);
 
         // Step 4: Start scheduling
         scheduler.startScheduling();
