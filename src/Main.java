@@ -2,25 +2,41 @@ import java.util.ArrayList;
 import java.util.List;
 import models.Process;
 import schedulers.FCAIScheduler;
+import schedulers.PriorityScheduler;
+import schedulers.SJFNonPreemptiveScheduler;
+import schedulers.SRTFScheduler;
+import schedulers.SrtfStarvation;
 
 public class Main {
     public static void main(String[] args) {
-        // Step 1: Create process objects
-        Process p1 = new Process("P1", "Red", 0, 17, 4, 0, 0,4,0);  // Arrival time 0, Burst time 17
-        Process p2 = new Process("P2", "Blue", 3, 6, 9, 0, 0,3,0);  // Arrival time 3, Burst time 6
-        Process p3 = new Process("P3", "Green", 4, 10, 3, 0, 0,5,0); // Arrival time 4, Burst time 10
-        Process p4 = new Process("P4", "Yellow", 29, 4, 8, 0, 0,2,0); // Arrival time 29, Burst time 4
 
-        // Step 2: Add processes to the list
+        Process p1 = new Process("P1", "Red", 0, 17, 4, 0, 0,4,0);  
+        Process p2 = new Process("P2", "Blue", 3, 6, 9, 0, 0,3,0);  
+        Process p3 = new Process("P3", "Green", 4, 10, 3, 0, 0,5,0); 
+        Process p4 = new Process("P4", "Yellow", 29, 4, 8, 0, 0,2,0); 
+
         List<Process> processList = new ArrayList<>();
         processList.add(p1);
         processList.add(p2);
         processList.add(p3);
         processList.add(p4);
 
-        // Step 3: Initialize the SRTF Scheduler with context switch time = 1, aging interval = 2, max wait time = 25
-        FCAIScheduler scheduler = new FCAIScheduler();
 
-        // Step 4: Start scheduling
-        scheduler.FCAIScheduling(processList);}
+        PriorityScheduler priorityScheduler = new PriorityScheduler(processList,1);
+        SJFNonPreemptiveScheduler  sjfScheduler = new SJFNonPreemptiveScheduler(processList);
+        SRTFScheduler srtfScheduler = new SRTFScheduler(processList, 1);
+        SrtfStarvation srtfStarvation = new SrtfStarvation(processList, 1, 1, 25);
+        FCAIScheduler fcaiScheduler = new FCAIScheduler();
+
+
+
+
+        //priorityScheduler.startScheduling();
+        //sjfScheduler.startScheduling();
+        //srtfScheduler.startScheduling();
+        //srtfStarvation.startScheduling();
+        //fcaiScheduler.FCAIScheduling(processList);
+    
+    }
+
 }
