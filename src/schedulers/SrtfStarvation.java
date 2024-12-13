@@ -46,7 +46,7 @@ public class SrtfStarvation extends Scheduler {
             for (Process process : readyQueue) {
                 int waitTime = currentTime - process.getArrivalTime() - (process.getBurstTime() - process.getRemainingTime());
                 if (waitTime > maxWaitTime) {
-                    process.setRemainingTime(Math.max(1, process.getRemainingTime() - agingInterval));
+                    process.setRemainingTime(Math.max(1, process.getPriority() - agingInterval));
                 }
             }
 
